@@ -1,0 +1,221 @@
+const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
+const cors = require('cors');
+const { v4: uuidv4 } = require('uuid');
+const questions = require('./questions.json');
+
+const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"]
+  }
+});
+
+app.use(cors());
+app.use(express.json());
+
+// Game state
+let gameState = {
+  currentQuestion: null,
+  questionIndex: -1,
+  teams: {
+    team1: { name: '', score: 0, answer: null, connected: false },
+    team2: { name: '', score: 0, answer: null, connected: false },
+    team3: { name: '', score: 0, answer: null, connected: false }
+  },
+  questionActive: false,
+  answersRevealed: false,
+  timeRemaining: 20
+};
+
+// Timer for questions
+let questionTimer = null;
+
+// Generate unique URLs for team leaders
+const teamTokens = {
+  team1: uuidv4(),
+  team2: uuidv4(),
+  team3: uuidv4()
+};
+
+console.log('\n=== TEAM LEADER URLS ===');
+console.log(`Team 1: http://localhost:3000/team/${teamTokens.team1}`);
+console.log(`Team 2: http://localhost:3000/team/${teamTokens.team2}`);
+console.log(`Team 3: http://localhost:3000/team/${teamTokens.team3}`);
+console.log('========================\n');
+
+// REST endpoints
+app.get('/api/team-urls', (req, res) => {
+  res.json({
+    team1: `http://localhost:3000/team/${teamTokens.team1}`,
+    team2: `http://localhost:3000/team/${teamTokens.team2}`,
+    team3: `http://localhost:3000/team/${teamTokens.team3}`
+  });
+});
+
+app.get('/api/questions', (req, res) => {
+  res.json(questions);
+});
+
+// Socket.IO connection handling
+io.on('connection', (socket) => {
+  console.log('New client connected:', socket.id);
+
+  // Join as quizmaster
+  socket.on('join-quizmaster', () => {
+    socket.join('quizmaster');
+    socket.emit('game-state', gameState);
+    socket.emit('team-urls', teamTokens);
+    console.log('Quizmaster joined');
+  });
+
+  // Join as team leader
+  socket.on('join-team', ({ token, teamName }) => {
+    const teamId = Object.keys(teamTokens).find(key => teamTokens[key] === token);
+    
+    if (teamId && gameState.teams[teamId]) {
+      socket.join(teamId);
+      gameState.teams[teamId].name = teamName;
+      gameState.teams[teamId].connected = true;
+      
+      socket.emit('team-joined', { teamId, teamName });
+      socket.emit('game-state', gameState);
+      
+      // Notify quizmaster
+      io.to('quizmaster').emit('game-state', gameState);
+      
+      console.log(`${teamName} joined as ${teamId}`);
+    } else {
+      socket.emit('error', 'Invalid team token');
+    }
+  });
+
+  // Quizmaster starts a question
+  socket.on('start-question', (questionIndex) => {
+    if (questionIndex >= 0 && questionIndex < questions.length) {
+      gameState.questionIndex = questionIndex;
+      gameState.currentQuestion = questions[questionIndex];
+      gameState.questionActive = true;
+      gameState.answersRevealed = false;
+      gameState.timeRemaining = 20;
+      
+      // Clear any existing timer
+      if (questionTimer) {
+        clearInterval(questionTimer);
+      }
+      
+      // Reset team answers
+      Object.keys(gameState.teams).forEach(teamId => {
+        gameState.teams[teamId].answer = null;
+      });
+      
+      // Send question to everyone
+      io.emit('new-question', {
+        question: gameState.currentQuestion.question,
+        options: gameState.currentQuestion.options,
+        questionNumber: questionIndex + 1,
+        totalQuestions: questions.length,
+        timeLimit: 20
+      });
+      
+      // Start countdown timer
+      questionTimer = setInterval(() => {
+        gameState.timeRemaining--;
+        io.emit('timer-update', { timeRemaining: gameState.timeRemaining });
+        
+        if (gameState.timeRemaining <= 0) {
+          clearInterval(questionTimer);
+          gameState.questionActive = false;
+          io.emit('time-up');
+          console.log('Time is up!');
+        }
+      }, 1000);
+      
+      console.log(`Question ${questionIndex + 1} started with 20 second timer`);
+    }
+  });
+
+  // Team submits answer
+  socket.on('submit-answer', ({ teamId, answer }) => {
+    if (gameState.questionActive && gameState.teams[teamId]) {
+      gameState.teams[teamId].answer = answer;
+      
+      // Notify quizmaster of answer submission
+      io.to('quizmaster').emit('game-state', gameState);
+      
+      // Confirm to team
+      socket.emit('answer-submitted');
+      
+      console.log(`${gameState.teams[teamId].name} answered: ${answer}`);
+    }
+  });
+
+  // Quizmaster reveals answers and updates scores
+  socket.on('reveal-answers', () => {
+    if (gameState.currentQuestion) {
+      // Clear timer
+      if (questionTimer) {
+        clearInterval(questionTimer);
+      }
+      
+      gameState.answersRevealed = true;
+      gameState.questionActive = false;
+      
+      const correctAnswer = gameState.currentQuestion.correctAnswer;
+      
+      // Update scores
+      Object.keys(gameState.teams).forEach(teamId => {
+        if (gameState.teams[teamId].answer === correctAnswer) {
+          gameState.teams[teamId].score += 100;
+        }
+      });
+      
+      // Send results to everyone
+      io.emit('answers-revealed', {
+        correctAnswer,
+        teams: gameState.teams,
+        explanation: gameState.currentQuestion.explanation || ''
+      });
+      
+      io.to('quizmaster').emit('game-state', gameState);
+      
+      console.log(`Answers revealed. Correct answer: ${correctAnswer}`);
+    }
+  });
+
+  // Reset game
+  socket.on('reset-game', () => {
+    // Clear timer
+    if (questionTimer) {
+      clearInterval(questionTimer);
+    }
+    
+    gameState.currentQuestion = null;
+    gameState.questionIndex = -1;
+    gameState.questionActive = false;
+    gameState.answersRevealed = false;
+    gameState.timeRemaining = 20;
+    
+    Object.keys(gameState.teams).forEach(teamId => {
+      gameState.teams[teamId].score = 0;
+      gameState.teams[teamId].answer = null;
+    });
+    
+    io.emit('game-reset');
+    io.to('quizmaster').emit('game-state', gameState);
+    
+    console.log('Game reset');
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected:', socket.id);
+  });
+});
+
+const PORT = process.env.PORT || 3001;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
