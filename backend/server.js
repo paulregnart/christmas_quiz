@@ -9,12 +9,14 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
     methods: ["GET", "POST"]
   }
 });
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "http://localhost:3000"
+}));
 app.use(express.json());
 
 // Game state
@@ -55,32 +57,34 @@ const teamTokens = {
   team10: uuidv4()
 };
 
+const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+
 console.log('\n=== TEAM LEADER URLS ===');
-console.log(`Team 1:  http://localhost:3000/team/${teamTokens.team1}`);
-console.log(`Team 2:  http://localhost:3000/team/${teamTokens.team2}`);
-console.log(`Team 3:  http://localhost:3000/team/${teamTokens.team3}`);
-console.log(`Team 4:  http://localhost:3000/team/${teamTokens.team4}`);
-console.log(`Team 5:  http://localhost:3000/team/${teamTokens.team5}`);
-console.log(`Team 6:  http://localhost:3000/team/${teamTokens.team6}`);
-console.log(`Team 7:  http://localhost:3000/team/${teamTokens.team7}`);
-console.log(`Team 8:  http://localhost:3000/team/${teamTokens.team8}`);
-console.log(`Team 9:  http://localhost:3000/team/${teamTokens.team9}`);
-console.log(`Team 10: http://localhost:3000/team/${teamTokens.team10}`);
+console.log(`Team 1:  ${frontendUrl}/team/${teamTokens.team1}`);
+console.log(`Team 2:  ${frontendUrl}/team/${teamTokens.team2}`);
+console.log(`Team 3:  ${frontendUrl}/team/${teamTokens.team3}`);
+console.log(`Team 4:  ${frontendUrl}/team/${teamTokens.team4}`);
+console.log(`Team 5:  ${frontendUrl}/team/${teamTokens.team5}`);
+console.log(`Team 6:  ${frontendUrl}/team/${teamTokens.team6}`);
+console.log(`Team 7:  ${frontendUrl}/team/${teamTokens.team7}`);
+console.log(`Team 8:  ${frontendUrl}/team/${teamTokens.team8}`);
+console.log(`Team 9:  ${frontendUrl}/team/${teamTokens.team9}`);
+console.log(`Team 10: ${frontendUrl}/team/${teamTokens.team10}`);
 console.log('========================\n');
 
 // REST endpoints
 app.get('/api/team-urls', (req, res) => {
   res.json({
-    team1: `http://localhost:3000/team/${teamTokens.team1}`,
-    team2: `http://localhost:3000/team/${teamTokens.team2}`,
-    team3: `http://localhost:3000/team/${teamTokens.team3}`,
-    team4: `http://localhost:3000/team/${teamTokens.team4}`,
-    team5: `http://localhost:3000/team/${teamTokens.team5}`,
-    team6: `http://localhost:3000/team/${teamTokens.team6}`,
-    team7: `http://localhost:3000/team/${teamTokens.team7}`,
-    team8: `http://localhost:3000/team/${teamTokens.team8}`,
-    team9: `http://localhost:3000/team/${teamTokens.team9}`,
-    team10: `http://localhost:3000/team/${teamTokens.team10}`
+    team1: `${frontendUrl}/team/${teamTokens.team1}`,
+    team2: `${frontendUrl}/team/${teamTokens.team2}`,
+    team3: `${frontendUrl}/team/${teamTokens.team3}`,
+    team4: `${frontendUrl}/team/${teamTokens.team4}`,
+    team5: `${frontendUrl}/team/${teamTokens.team5}`,
+    team6: `${frontendUrl}/team/${teamTokens.team6}`,
+    team7: `${frontendUrl}/team/${teamTokens.team7}`,
+    team8: `${frontendUrl}/team/${teamTokens.team8}`,
+    team9: `${frontendUrl}/team/${teamTokens.team9}`,
+    team10: `${frontendUrl}/team/${teamTokens.team10}`
   });
 });
 

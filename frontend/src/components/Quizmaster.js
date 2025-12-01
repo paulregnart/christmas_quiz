@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import './Quizmaster.css';
 
-const socket = io('http://localhost:3001');
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+const socket = io(BACKEND_URL);
 
 function Quizmaster() {
   const [gameState, setGameState] = useState(null);
@@ -17,12 +18,12 @@ function Quizmaster() {
     socket.emit('join-quizmaster');
 
     // Fetch questions
-    fetch('http://localhost:3001/api/questions')
+    fetch(`${BACKEND_URL}/api/questions`)
       .then(res => res.json())
       .then(data => setQuestions(data));
 
     // Fetch team URLs
-    fetch('http://localhost:3001/api/team-urls')
+    fetch(`${BACKEND_URL}/api/team-urls`)
       .then(res => res.json())
       .then(data => setTeamUrls(data));
 

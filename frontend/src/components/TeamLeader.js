@@ -3,7 +3,8 @@ import { useParams } from 'react-router-dom';
 import io from 'socket.io-client';
 import './TeamLeader.css';
 
-const socket = io('http://localhost:3001');
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+const socket = io(BACKEND_URL);
 
 function TeamLeader() {
   const { token } = useParams();
