@@ -18,6 +18,11 @@ function TeamLeader() {
   const [revealedAnswer, setRevealedAnswer] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState(20);
 
+  // Debug: Log token on component mount
+  useEffect(() => {
+    console.log('TeamLeader mounted with token:', token);
+  }, [token]);
+
   useEffect(() => {
     // Listen for game state updates
     socket.on('game-state', (state) => {
@@ -105,12 +110,27 @@ function TeamLeader() {
     }
   };
 
+  // Show error if no token
+  if (!token) {
+    return (
+      <div className="team-leader join-screen">
+        <div className="join-container">
+          <h1>🎄 Christmas Quiz 🎅</h1>
+          <h2>Invalid Team URL</h2>
+          <p>Please use the correct team URL provided by the quizmaster.</p>
+          <p style={{ fontSize: '12px', color: '#999' }}>Current URL: {window.location.href}</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!joined) {
     return (
       <div className="team-leader join-screen">
         <div className="join-container">
           <h1>🎄 Christmas Quiz 🎅</h1>
           <h2>Team Leader Login</h2>
+          <p style={{ fontSize: '14px', marginBottom: '10px' }}>Token: {token.substring(0, 8)}...</p>
           <form onSubmit={handleJoin}>
             <input
               type="text"
