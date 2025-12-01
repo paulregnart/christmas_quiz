@@ -39,11 +39,13 @@ REACT_APP_BACKEND_URL=https://christmas-quiz.onrender.com
 
 ```bash
 git add .
-git commit -m "Configure for Render deployment"
+git commit -m "Fix routing for team URLs on Render"
 git push origin main
 ```
 
 Render will automatically redeploy both services.
+
+**Important:** The `_redirects` file in `frontend/public/` ensures that team URLs work correctly when accessed directly.
 
 ## 🎮 Testing Your Deployment
 
