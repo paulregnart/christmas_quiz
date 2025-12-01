@@ -24,7 +24,14 @@ let gameState = {
   teams: {
     team1: { name: '', score: 0, answer: null, connected: false },
     team2: { name: '', score: 0, answer: null, connected: false },
-    team3: { name: '', score: 0, answer: null, connected: false }
+    team3: { name: '', score: 0, answer: null, connected: false },
+    team4: { name: '', score: 0, answer: null, connected: false },
+    team5: { name: '', score: 0, answer: null, connected: false },
+    team6: { name: '', score: 0, answer: null, connected: false },
+    team7: { name: '', score: 0, answer: null, connected: false },
+    team8: { name: '', score: 0, answer: null, connected: false },
+    team9: { name: '', score: 0, answer: null, connected: false },
+    team10: { name: '', score: 0, answer: null, connected: false }
   },
   questionActive: false,
   answersRevealed: false,
@@ -38,13 +45,27 @@ let questionTimer = null;
 const teamTokens = {
   team1: uuidv4(),
   team2: uuidv4(),
-  team3: uuidv4()
+  team3: uuidv4(),
+  team4: uuidv4(),
+  team5: uuidv4(),
+  team6: uuidv4(),
+  team7: uuidv4(),
+  team8: uuidv4(),
+  team9: uuidv4(),
+  team10: uuidv4()
 };
 
 console.log('\n=== TEAM LEADER URLS ===');
-console.log(`Team 1: http://localhost:3000/team/${teamTokens.team1}`);
-console.log(`Team 2: http://localhost:3000/team/${teamTokens.team2}`);
-console.log(`Team 3: http://localhost:3000/team/${teamTokens.team3}`);
+console.log(`Team 1:  http://localhost:3000/team/${teamTokens.team1}`);
+console.log(`Team 2:  http://localhost:3000/team/${teamTokens.team2}`);
+console.log(`Team 3:  http://localhost:3000/team/${teamTokens.team3}`);
+console.log(`Team 4:  http://localhost:3000/team/${teamTokens.team4}`);
+console.log(`Team 5:  http://localhost:3000/team/${teamTokens.team5}`);
+console.log(`Team 6:  http://localhost:3000/team/${teamTokens.team6}`);
+console.log(`Team 7:  http://localhost:3000/team/${teamTokens.team7}`);
+console.log(`Team 8:  http://localhost:3000/team/${teamTokens.team8}`);
+console.log(`Team 9:  http://localhost:3000/team/${teamTokens.team9}`);
+console.log(`Team 10: http://localhost:3000/team/${teamTokens.team10}`);
 console.log('========================\n');
 
 // REST endpoints
@@ -52,7 +73,14 @@ app.get('/api/team-urls', (req, res) => {
   res.json({
     team1: `http://localhost:3000/team/${teamTokens.team1}`,
     team2: `http://localhost:3000/team/${teamTokens.team2}`,
-    team3: `http://localhost:3000/team/${teamTokens.team3}`
+    team3: `http://localhost:3000/team/${teamTokens.team3}`,
+    team4: `http://localhost:3000/team/${teamTokens.team4}`,
+    team5: `http://localhost:3000/team/${teamTokens.team5}`,
+    team6: `http://localhost:3000/team/${teamTokens.team6}`,
+    team7: `http://localhost:3000/team/${teamTokens.team7}`,
+    team8: `http://localhost:3000/team/${teamTokens.team8}`,
+    team9: `http://localhost:3000/team/${teamTokens.team9}`,
+    team10: `http://localhost:3000/team/${teamTokens.team10}`
   });
 });
 
@@ -78,6 +106,7 @@ io.on('connection', (socket) => {
     
     if (teamId && gameState.teams[teamId]) {
       socket.join(teamId);
+      socket.teamId = teamId; // Store teamId with socket
       gameState.teams[teamId].name = teamName;
       gameState.teams[teamId].connected = true;
       
@@ -200,8 +229,10 @@ io.on('connection', (socket) => {
     gameState.timeRemaining = 20;
     
     Object.keys(gameState.teams).forEach(teamId => {
+      gameState.teams[teamId].name = '';
       gameState.teams[teamId].score = 0;
       gameState.teams[teamId].answer = null;
+      gameState.teams[teamId].connected = false;
     });
     
     io.emit('game-reset');

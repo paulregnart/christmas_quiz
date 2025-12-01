@@ -76,6 +76,8 @@ function TeamLeader() {
       socket.off('game-state');
       socket.off('team-joined');
       socket.off('new-question');
+      socket.off('timer-update');
+      socket.off('time-up');
       socket.off('answer-submitted');
       socket.off('answers-revealed');
       socket.off('game-reset');
@@ -151,6 +153,9 @@ function TeamLeader() {
               <span className="question-number">
                 Question {currentQuestion.questionNumber} of {currentQuestion.totalQuestions}
               </span>
+              <div className={`timer ${timeRemaining <= 5 ? 'timer-warning' : ''}`}>
+                ⏱️ {timeRemaining}s
+              </div>
             </div>
             
             <h2 className="question-text">{currentQuestion.question}</h2>
@@ -189,21 +194,21 @@ function TeamLeader() {
             <h2>Results</h2>
             
             <div className={`result-card ${
-              myTeam?.answer === revealedAnswer.correctAnswer ? 'correct' : 'incorrect'
+              revealedAnswer.teams[teamId]?.answer === revealedAnswer.correctAnswer ? 'correct' : 'incorrect'
             }`}>
-              {myTeam?.answer === revealedAnswer.correctAnswer ? (
+              {revealedAnswer.teams[teamId]?.answer === revealedAnswer.correctAnswer ? (
                 <div className="result-icon">🎉</div>
               ) : (
                 <div className="result-icon">😔</div>
               )}
               
               <h3>
-                {myTeam?.answer === revealedAnswer.correctAnswer 
+                {revealedAnswer.teams[teamId]?.answer === revealedAnswer.correctAnswer 
                   ? 'Correct! +100 points' 
                   : 'Incorrect'}
               </h3>
               
-              <p>Your answer: <strong>{myTeam?.answer || 'No answer'}</strong></p>
+              <p>Your answer: <strong>{revealedAnswer.teams[teamId]?.answer || 'No answer'}</strong></p>
               <p>Correct answer: <strong>{revealedAnswer.correctAnswer}</strong></p>
             </div>
 

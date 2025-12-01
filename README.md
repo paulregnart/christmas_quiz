@@ -4,10 +4,11 @@ A real-time, Kahoot-style quiz game for Christmas events with WebSocket support 
 
 ## Features
 
-- **Three Team Leader Slots**: Unique URLs for each team leader to join
+- **Ten Team Slots**: Unique URLs for each of the 10 teams to join
 - **Quizmaster Dashboard**: Control questions, reveal answers, and track scores
 - **Real-time Updates**: Socket.IO powers instant communication
-- **20 Christmas Questions**: Medium-difficulty trivia about Christmas
+- **15 Christmas Questions**: Medium-difficulty trivia about Christmas
+- **20-Second Timer**: Countdown timer for each question with visual warnings
 - **Live Leaderboard**: Track team scores in real-time
 - **Festive Design**: Christmas-themed UI with green, red, and gold colors
 
