@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import './Quizmaster.css';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://christmas-quiz.onrender.com';
+console.log('BACKEND_URL:', BACKEND_URL);
 const socket = io(BACKEND_URL);
 
 function Quizmaster() {

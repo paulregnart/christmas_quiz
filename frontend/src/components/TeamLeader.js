@@ -3,7 +3,8 @@ import { useParams } from 'react-router-dom';
 import io from 'socket.io-client';
 import './TeamLeader.css';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'https://christmas-quiz.onrender.com';
+console.log('BACKEND_URL:', BACKEND_URL);
 const socket = io(BACKEND_URL);
 
 function TeamLeader() {
@@ -21,6 +22,7 @@ function TeamLeader() {
   // Debug: Log token on component mount
   useEffect(() => {
     console.log('TeamLeader mounted with token:', token);
+    console.log('Backend URL being used:', BACKEND_URL);
   }, [token]);
 
   useEffect(() => {
