@@ -9,13 +9,13 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: process.env.FRONTEND_URL || "https://christmas-quiz-1.onrender.com",
     methods: ["GET", "POST"]
   }
 });
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:3000"
+  origin: process.env.FRONTEND_URL || "https://christmas-quiz-1.onrender.com"
 }));
 app.use(express.json());
 
@@ -57,7 +57,7 @@ const teamTokens = {
   team10: uuidv4()
 };
 
-const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+const frontendUrl = process.env.FRONTEND_URL || 'https://christmas-quiz.onrender.com';
 
 console.log('\n=== TEAM LEADER URLS ===');
 console.log(`Team 1:  ${frontendUrl}/team/${teamTokens.team1}`);
