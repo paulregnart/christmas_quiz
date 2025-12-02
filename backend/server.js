@@ -73,6 +73,24 @@ console.log(`Team 10: ${frontendUrl}/team/${teamTokens.team10}`);
 console.log('========================\n');
 
 // REST endpoints
+app.get('/', (req, res) => {
+  res.send(`
+    <h1>Christmas Quiz Backend</h1>
+    <p>Server is running! 🎄</p>
+    <h2>Available Endpoints:</h2>
+    <ul>
+      <li><a href="/api/game-state">/api/game-state</a> - Current game state</li>
+      <li><a href="/api/questions">/api/questions</a> - All quiz questions</li>
+      <li><a href="/api/team-urls">/api/team-urls</a> - Team leader URLs</li>
+      <li>POST /api/start-question - Start a question</li>
+      <li>POST /api/reveal-answers - Reveal answers</li>
+      <li>POST /api/reset-game - Reset game</li>
+    </ul>
+    <p>Frontend: <a href="${frontendUrl}">${frontendUrl}</a></p>
+    <p>Quizmaster: <a href="${frontendUrl}/quizmaster">${frontendUrl}/quizmaster</a></p>
+  `);
+});
+
 app.get('/api/team-urls', (req, res) => {
   res.json({
     team1: `${frontendUrl}/team/${teamTokens.team1}`,
@@ -90,6 +108,108 @@ app.get('/api/team-urls', (req, res) => {
 
 app.get('/api/questions', (req, res) => {
   res.json(questions);
+});
+
+app.get('/api/game-state', (req, res) => {
+  res.json(gameState);
+});
+
+app.post('/api/start-question', (req, res) => {
+  const { questionIndex } = req.body;
+  
+  if (questionIndex >= 0 && questionIndex < questions.length) {
+    gameState.questionIndex = questionIndex;
+    gameState.currentQuestion = questions[questionIndex];
+    gameState.questionActive = true;
+    gameState.answersRevealed = false;
+    gameState.timeRemaining = 20;
+    
+    if (questionTimer) {
+      clearInterval(questionTimer);
+    }
+    
+    Object.keys(gameState.teams).forEach(teamId => {
+      gameState.teams[teamId].answer = null;
+    });
+    
+    io.emit('new-question', {
+      question: gameState.currentQuestion.question,
+      options: gameState.currentQuestion.options,
+      questionNumber: questionIndex + 1,
+      totalQuestions: questions.length,
+      timeLimit: 20
+    });
+    
+    questionTimer = setInterval(() => {
+      gameState.timeRemaining--;
+      io.emit('timer-update', { timeRemaining: gameState.timeRemaining });
+      
+      if (gameState.timeRemaining <= 0) {
+        clearInterval(questionTimer);
+        gameState.questionActive = false;
+        io.emit('time-up');
+      }
+    }, 1000);
+    
+    res.json({ success: true, message: `Question ${questionIndex + 1} started` });
+  } else {
+    res.status(400).json({ success: false, message: 'Invalid question index' });
+  }
+});
+
+app.post('/api/reveal-answers', (req, res) => {
+  if (gameState.currentQuestion) {
+    if (questionTimer) {
+      clearInterval(questionTimer);
+    }
+    
+    gameState.answersRevealed = true;
+    gameState.questionActive = false;
+    
+    const correctAnswer = gameState.currentQuestion.correctAnswer;
+    
+    Object.keys(gameState.teams).forEach(teamId => {
+      if (gameState.teams[teamId].answer === correctAnswer) {
+        gameState.teams[teamId].score += 100;
+      }
+    });
+    
+    io.emit('answers-revealed', {
+      correctAnswer,
+      teams: gameState.teams,
+      explanation: gameState.currentQuestion.explanation || ''
+    });
+    
+    io.to('quizmaster').emit('game-state', gameState);
+    
+    res.json({ success: true, correctAnswer, teams: gameState.teams });
+  } else {
+    res.status(400).json({ success: false, message: 'No active question' });
+  }
+});
+
+app.post('/api/reset-game', (req, res) => {
+  if (questionTimer) {
+    clearInterval(questionTimer);
+  }
+  
+  gameState.currentQuestion = null;
+  gameState.questionIndex = -1;
+  gameState.questionActive = false;
+  gameState.answersRevealed = false;
+  gameState.timeRemaining = 20;
+  
+  Object.keys(gameState.teams).forEach(teamId => {
+    gameState.teams[teamId].name = '';
+    gameState.teams[teamId].score = 0;
+    gameState.teams[teamId].answer = null;
+    gameState.teams[teamId].connected = false;
+  });
+  
+  io.emit('game-reset');
+  io.to('quizmaster').emit('game-state', gameState);
+  
+  res.json({ success: true, message: 'Game reset successfully' });
 });
 
 // Socket.IO connection handling
