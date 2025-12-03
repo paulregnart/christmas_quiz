@@ -127,11 +127,18 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case 'get_team_urls': {
         const response = await axios.get(`${BACKEND_URL}/api/team-urls`);
+        const urls = response.data;
+        
+        // Format as a readable list
+        const formattedList = Object.entries(urls)
+          .map(([teamName, url]) => `${teamName}: ${url}`)
+          .join('\n');
+        
         return {
           content: [
             {
               type: 'text',
-              text: JSON.stringify(response.data, null, 2),
+              text: `Team Leader URLs:\n\n${formattedList}`,
             },
           ],
         };
