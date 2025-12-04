@@ -2,113 +2,113 @@
   {
     "id": 1,
     "question": "In which country did the tradition of putting up a Christmas tree originate?",
-    "options": ["Germany", "England", "United States", "France"],
-    "correctAnswer": "Germany",
+    "options": ["England", "Germany", "United States", "France"],
+    "correctAnswer": 1,
     "explanation": "The tradition of decorating evergreen trees at Christmas originated in Germany in the 16th century."
   },
   {
     "id": 2,
     "question": "What are the names of all nine of Santa's reindeer?",
     "options": [
-      "Dasher, Dancer, Prancer, Vixen, Comet, Cupid, Donner, Blitzen, Rudolph",
       "Dasher, Dancer, Prancer, Vixen, Comet, Cupid, Thunder, Blitzen, Rudolph",
       "Dasher, Dancer, Prancer, Vixen, Comet, Cupid, Donner, Blitzen, Ralph",
-      "Dasher, Dancer, Jumper, Vixen, Comet, Cupid, Donner, Blitzen, Rudolph"
+      "Dasher, Dancer, Jumper, Vixen, Comet, Cupid, Donner, Blitzen, Rudolph",
+      "Dasher, Dancer, Prancer, Vixen, Comet, Cupid, Donner, Blitzen, Rudolph"
     ],
-    "correctAnswer": "Dasher, Dancer, Prancer, Vixen, Comet, Cupid, Donner, Blitzen, Rudolph"
+    "correctAnswer": 3
   },
   {
     "id": 3,
     "question": "In the song 'The Twelve Days of Christmas,' what gift is given on the seventh day?",
-    "options": ["Seven swans a-swimming", "Seven geese a-laying", "Seven lords a-leaping", "Seven maids a-milking"],
-    "correctAnswer": "Seven swans a-swimming"
+    "options": ["Seven geese a-laying", "Seven swans a-swimming", "Seven lords a-leaping", "Seven maids a-milking"],
+    "correctAnswer": 1
   },
   {
     "id": 4,
     "question": "What is the name of the Grinch's dog in 'How the Grinch Stole Christmas'?",
-    "options": ["Max", "Spot", "Buddy", "Rex"],
-    "correctAnswer": "Max"
+    "options": ["Spot", "Buddy", "Max", "Rex"],
+    "correctAnswer": 2
   },
   {
     "id": 5,
     "question": "Which country started the tradition of exchanging gifts at Christmas?",
-    "options": ["Italy", "Greece", "Egypt", "Rome"],
-    "correctAnswer": "Italy",
+    "options": ["Greece", "Egypt", "Rome", "Italy"],
+    "correctAnswer": 3,
     "explanation": "Ancient Romans exchanged gifts during Saturnalia, which influenced modern Christmas gift-giving traditions."
   },
   {
     "id": 6,
     "question": "In 'Home Alone,' where is the McCallister family traveling when they leave Kevin behind?",
-    "options": ["Paris", "London", "Rome", "New York"],
-    "correctAnswer": "Paris"
+    "options": ["London", "Paris", "Rome", "New York"],
+    "correctAnswer": 1
   },
   {
     "id": 7,
     "question": "What Christmas decoration was originally made from strands of silver?",
-    "options": ["Tinsel", "Garland", "Ornaments", "Lights"],
-    "correctAnswer": "Tinsel",
+    "options": ["Garland", "Ornaments", "Tinsel", "Lights"],
+    "correctAnswer": 2,
     "explanation": "Tinsel was originally made from real silver and was invented in Germany around 1610."
   },
   {
     "id": 8,
     "question": "According to the Bible, what did the three wise men bring to baby Jesus?",
     "options": [
-      "Gold, frankincense, and myrrh",
       "Gold, silver, and bronze",
+      "Gold, frankincense, and myrrh",
       "Gifts, prayers, and blessings",
       "Gold, diamonds, and pearls"
     ],
-    "correctAnswer": "Gold, frankincense, and myrrh"
+    "correctAnswer": 1
   },
   {
     "id": 9,
     "question": "In which modern-day country was Saint Nicholas born?",
-    "options": ["Turkey", "Greece", "Finland", "Norway"],
-    "correctAnswer": "Turkey",
+    "options": ["Greece", "Finland", "Turkey", "Norway"],
+    "correctAnswer": 2,
     "explanation": "Saint Nicholas was born in Patara, which is in modern-day Turkey, around 280 AD."
   },
   {
     "id": 10,
     "question": "What Christmas beverage is also known as 'milk punch'?",
-    "options": ["Eggnog", "Hot chocolate", "Mulled wine", "Apple cider"],
-    "correctAnswer": "Eggnog"
+    "options": ["Hot chocolate", "Mulled wine", "Apple cider", "Eggnog"],
+    "correctAnswer": 3
   },
   {
     "id": 11,
     "question": "Which popular Christmas song was actually written for Thanksgiving?",
-    "options": ["Jingle Bells", "Silent Night", "Deck the Halls", "Joy to the World"],
-    "correctAnswer": "Jingle Bells",
+    "options": ["Silent Night", "Jingle Bells", "Deck the Halls", "Joy to the World"],
+    "correctAnswer": 1,
     "explanation": "Jingle Bells was originally written by James Lord Pierpont in 1857 for Thanksgiving."
   },
   {
     "id": 12,
     "question": "What is Frosty the Snowman's nose made of?",
-    "options": ["A button", "A carrot", "A coal", "A stick"],
-    "correctAnswer": "A button"
+    "options": ["A carrot", "A coal", "A button", "A stick"],
+    "correctAnswer": 2
   },
   {
     "id": 13,
     "question": "In the movie 'Elf,' what is the first rule of The Code of Elves?",
     "options": [
-      "Treat every day like Christmas",
       "There's room for everyone on the nice list",
       "The best way to spread Christmas cheer is singing loud for all to hear",
-      "Never give up on your dreams"
+      "Never give up on your dreams",
+      "Treat every day like Christmas"
     ],
-    "correctAnswer": "Treat every day like Christmas"
+    "correctAnswer": 3
   },
   {
     "id": 14,
     "question": "How many ghosts visit Ebenezer Scrooge in 'A Christmas Carol'?",
-    "options": ["Four", "Three", "Five", "Two"],
-    "correctAnswer": "Four",
+    "options": ["Three", "Four", "Five", "Two"],
+    "correctAnswer": 1,
     "explanation": "Jacob Marley and the three spirits of Christmas Past, Present, and Yet to Come."
   },
   {
     "id": 15,
     "question": "What traditional Christmas decoration is actually a parasitic plant?",
-    "options": ["Mistletoe", "Holly", "Ivy", "Poinsettia"],
-    "correctAnswer": "Mistletoe",
+    "options": ["Holly", "Ivy", "Mistletoe", "Poinsettia"],
+    "correctAnswer": 2,
     "explanation": "Mistletoe is a parasitic plant that grows on trees and has been used in Christmas traditions for centuries."
   }
 ]
