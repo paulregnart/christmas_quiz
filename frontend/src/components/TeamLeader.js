@@ -115,7 +115,8 @@ function TeamLeader() {
   };
 
   const handleSubmitAnswer = () => {
-    if (selectedAnswer && teamId) {
+    if (selectedAnswer !== null && selectedAnswer !== undefined && teamId) {
+      console.log(`Submitting answer: ${selectedAnswer} (type: ${typeof selectedAnswer})`);
       socket.emit('submit-answer', { teamId, answer: selectedAnswer });
     }
   };

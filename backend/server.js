@@ -308,7 +308,7 @@ io.on('connection', (socket) => {
       // Confirm to team
       socket.emit('answer-submitted');
       
-      console.log(`${gameState.teams[teamId].name} answered: ${answer}`);
+      console.log(`${gameState.teams[teamId].name} answered: ${answer} (type: ${typeof answer})`);
     }
   });
 
@@ -325,12 +325,21 @@ io.on('connection', (socket) => {
       
       const correctAnswer = gameState.currentQuestion.correctAnswer;
       
+      console.log(`\n=== REVEAL ANSWERS ===`);
+      console.log(`Correct answer: ${correctAnswer} (type: ${typeof correctAnswer})`);
+      
       // Update scores
       Object.keys(gameState.teams).forEach(teamId => {
-        if (gameState.teams[teamId].answer === correctAnswer) {
+        const teamAnswer = gameState.teams[teamId].answer;
+        const isCorrect = teamAnswer === correctAnswer;
+        console.log(`${teamId}: answered ${teamAnswer} (type: ${typeof teamAnswer}), correct: ${isCorrect}`);
+        
+        if (isCorrect) {
           gameState.teams[teamId].score += 100;
         }
       });
+      
+      console.log(`======================\n`);
       
       // Send results to everyone
       io.emit('answers-revealed', {
