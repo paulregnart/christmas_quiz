@@ -57,7 +57,7 @@ const teamTokens = {
   team10: uuidv4()
 };
 
-const frontendUrl = process.env.FRONTEND_URL || 'https://christmas-quiz.onrender.com';
+const frontendUrl = process.env.FRONTEND_URL || 'https://christmas-quiz-1.onrender.com';
 
 console.log('\n=== TEAM LEADER URLS ===');
 console.log(`Team 1:  ${frontendUrl}/team/${teamTokens.team1}`);
