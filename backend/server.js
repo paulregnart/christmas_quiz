@@ -9,14 +9,17 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || "https://christmas-quiz-1.onrender.com",
+    origin: process.env.NODE_ENV === 'test' ? "*" : (process.env.FRONTEND_URL || "https://christmas-quiz-1.onrender.com"),
     methods: ["GET", "POST"]
   }
 });
 
-app.use(cors({
-  origin: process.env.FRONTEND_URL || "https://christmas-quiz-1.onrender.com"
-}));
+// Allow all origins in test mode, specific origin in production
+const corsOptions = process.env.NODE_ENV === 'test' 
+  ? { origin: true }
+  : { origin: process.env.FRONTEND_URL || "https://christmas-quiz-1.onrender.com" };
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Game state
@@ -59,18 +62,21 @@ const teamTokens = {
 
 const frontendUrl = process.env.FRONTEND_URL || 'https://christmas-quiz-1.onrender.com';
 
-console.log('\n=== TEAM LEADER URLS ===');
-console.log(`Team 1:  ${frontendUrl}/team/${teamTokens.team1}`);
-console.log(`Team 2:  ${frontendUrl}/team/${teamTokens.team2}`);
-console.log(`Team 3:  ${frontendUrl}/team/${teamTokens.team3}`);
-console.log(`Team 4:  ${frontendUrl}/team/${teamTokens.team4}`);
-console.log(`Team 5:  ${frontendUrl}/team/${teamTokens.team5}`);
-console.log(`Team 6:  ${frontendUrl}/team/${teamTokens.team6}`);
-console.log(`Team 7:  ${frontendUrl}/team/${teamTokens.team7}`);
-console.log(`Team 8:  ${frontendUrl}/team/${teamTokens.team8}`);
-console.log(`Team 9:  ${frontendUrl}/team/${teamTokens.team9}`);
-console.log(`Team 10: ${frontendUrl}/team/${teamTokens.team10}`);
-console.log('========================\n');
+// Only log team URLs in non-test mode
+if (process.env.NODE_ENV !== 'test') {
+  console.log('\n=== TEAM LEADER URLS ===');
+  console.log(`Team 1:  ${frontendUrl}/team/${teamTokens.team1}`);
+  console.log(`Team 2:  ${frontendUrl}/team/${teamTokens.team2}`);
+  console.log(`Team 3:  ${frontendUrl}/team/${teamTokens.team3}`);
+  console.log(`Team 4:  ${frontendUrl}/team/${teamTokens.team4}`);
+  console.log(`Team 5:  ${frontendUrl}/team/${teamTokens.team5}`);
+  console.log(`Team 6:  ${frontendUrl}/team/${teamTokens.team6}`);
+  console.log(`Team 7:  ${frontendUrl}/team/${teamTokens.team7}`);
+  console.log(`Team 8:  ${frontendUrl}/team/${teamTokens.team8}`);
+  console.log(`Team 9:  ${frontendUrl}/team/${teamTokens.team9}`);
+  console.log(`Team 10: ${frontendUrl}/team/${teamTokens.team10}`);
+  console.log('========================\n');
+}
 
 // REST endpoints
 app.get('/', (req, res) => {
@@ -371,6 +377,13 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 3001;
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+
+// Only start server if not being imported (i.e., not in test mode)
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+// Export for testing
+module.exports = server;

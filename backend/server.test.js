@@ -21,25 +21,20 @@ jest.mock('./questions.json', () => [
 ]);
 
 describe('Backend API Tests', () => {
-  let app, server, io;
-  let serverPort;
+  let server;
 
-  beforeAll((done) => {
+  beforeAll(() => {
     // Mock environment variables
     process.env.FRONTEND_URL = 'http://localhost:3000';
+    process.env.NODE_ENV = 'test';
     
-    // Import server after mocking
-    const express = require('express');
-    app = express();
-    server = createServer(app);
-    io = new Server(server);
-    
-    serverPort = 3002; // Use different port for tests
-    server.listen(serverPort, done);
+    // Import server after setting env vars
+    server = require('./server.js');
   });
 
   afterAll((done) => {
-    server.close(done);
+    // Don't close server in API tests - Socket.IO tests will handle it
+    done();
   });
 
   describe('REST API Endpoints', () => {
@@ -123,19 +118,37 @@ describe('Socket.IO Integration Tests', () => {
   beforeAll((done) => {
     httpServer = createServer();
     io = new Server(httpServer);
-    httpServer.listen(port, () => {
+    httpServer.listen(port, (err) => {
+      if (err) {
+        done(err);
+        return;
+      }
       clientSocket = Client(`http://localhost:${port}`);
       io.on('connection', (socket) => {
         serverSocket = socket;
       });
       clientSocket.on('connect', done);
+      clientSocket.on('connect_error', (err) => {
+        done(err);
+      });
     });
   });
 
-  afterAll(() => {
-    io.close();
-    clientSocket.close();
-    httpServer.close();
+  afterAll((done) => {
+    if (clientSocket && clientSocket.connected) {
+      clientSocket.disconnect();
+    }
+    if (io) {
+      io.close(() => {
+        if (httpServer && httpServer.listening) {
+          httpServer.close(done);
+        } else {
+          done();
+        }
+      });
+    } else {
+      done();
+    }
   });
 
   test('client connects successfully', () => {
