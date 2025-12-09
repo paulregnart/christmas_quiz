@@ -177,6 +177,31 @@ cd frontend
 npm start
 ```
 
+## Testing
+
+The project includes comprehensive test suites for both backend and frontend.
+
+### Run Backend Tests
+```bash
+cd backend
+npm test
+```
+
+### Run Frontend Tests
+```bash
+cd frontend
+npm test
+```
+
+Tests cover:
+- REST API endpoints
+- Socket.IO integration
+- Answer validation (index-based, not text)
+- Game logic and state management
+- Component rendering and interactions
+
+For detailed testing documentation, see [TESTING.md](TESTING.md).
+
 ## Troubleshooting
 
 **Teams can't connect:**
