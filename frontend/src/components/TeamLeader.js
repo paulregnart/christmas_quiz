@@ -187,10 +187,10 @@ function TeamLeader() {
               {currentQuestion.options.map((option, index) => (
                 <button
                   key={index}
-                  className={`option-btn ${selectedAnswer === option ? 'selected' : ''} ${
+                  className={`option-btn ${selectedAnswer === index ? 'selected' : ''} ${
                     answerSubmitted ? 'disabled' : ''
                   }`}
-                  onClick={() => handleAnswerSelect(option)}
+                  onClick={() => handleAnswerSelect(index)}
                   disabled={answerSubmitted}
                 >
                   {option}
@@ -231,8 +231,8 @@ function TeamLeader() {
                   : 'Incorrect'}
               </h3>
               
-              <p>Your answer: <strong>{revealedAnswer.teams[teamId]?.answer || 'No answer'}</strong></p>
-              <p>Correct answer: <strong>{revealedAnswer.correctAnswer}</strong></p>
+              <p>Your answer: <strong>{currentQuestion?.options[revealedAnswer.teams[teamId]?.answer] || 'No answer'}</strong></p>
+              <p>Correct answer: <strong>{currentQuestion?.options[revealedAnswer.correctAnswer]}</strong></p>
             </div>
 
             {revealedAnswer.explanation && (
