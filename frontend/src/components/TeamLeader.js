@@ -17,6 +17,7 @@ function TeamLeader() {
   const [answerSubmitted, setAnswerSubmitted] = useState(false);
   const [gameState, setGameState] = useState(null);
   const [revealedAnswer, setRevealedAnswer] = useState(null);
+  const [revealedQuestion, setRevealedQuestion] = useState(null); // Store question data with results
   const [timeRemaining, setTimeRemaining] = useState(20);
 
   // Debug: Log token on component mount
@@ -39,10 +40,11 @@ function TeamLeader() {
 
     // Listen for new questions
     socket.on('new-question', (question) => {
+      setRevealedAnswer(null); // Clear old results first
+      setRevealedQuestion(null); // Clear old question data
       setCurrentQuestion(question);
       setSelectedAnswer(null);
       setAnswerSubmitted(false);
-      setRevealedAnswer(null);
       setTimeRemaining(question.timeLimit || 20);
     });
 
@@ -65,6 +67,7 @@ function TeamLeader() {
     // Listen for revealed answers
     socket.on('answers-revealed', (data) => {
       setRevealedAnswer(data);
+      setRevealedQuestion(currentQuestion); // Save current question data with results
     });
 
     // Listen for game reset
@@ -73,6 +76,7 @@ function TeamLeader() {
       setSelectedAnswer(null);
       setAnswerSubmitted(false);
       setRevealedAnswer(null);
+      setRevealedQuestion(null);
       setTimeRemaining(20);
     });
 
@@ -231,8 +235,8 @@ function TeamLeader() {
                   : 'Incorrect'}
               </h3>
               
-              <p>Your answer: <strong>{currentQuestion?.options[revealedAnswer.teams[teamId]?.answer] || 'No answer'}</strong></p>
-              <p>Correct answer: <strong>{currentQuestion?.options[revealedAnswer.correctAnswer]}</strong></p>
+              <p>Your answer: <strong>{revealedQuestion?.options[revealedAnswer.teams[teamId]?.answer] || 'No answer'}</strong></p>
+              <p>Correct answer: <strong>{revealedQuestion?.options[revealedAnswer.correctAnswer]}</strong></p>
             </div>
 
             {revealedAnswer.explanation && (
