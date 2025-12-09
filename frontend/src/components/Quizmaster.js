@@ -175,9 +175,26 @@ function Quizmaster() {
 
               <div className="control-buttons">
                 {!gameState.answersRevealed && (
-                  <button className="btn-reveal" onClick={revealAnswers}>
-                    Reveal Answers
-                  </button>
+                  <>
+                    <button className="btn-reveal" onClick={revealAnswers}>
+                      Reveal Answers
+                    </button>
+                    <div className="answer-status">
+                      {(() => {
+                        const connectedTeams = Object.values(gameState.teams).filter(t => t.connected);
+                        const answeredTeams = connectedTeams.filter(t => t.answer !== null);
+                        const allAnswered = connectedTeams.length > 0 && answeredTeams.length === connectedTeams.length;
+                        
+                        if (allAnswered) {
+                          return <span className="all-answered">✓ All teams answered! ({answeredTeams.length}/{connectedTeams.length})</span>;
+                        } else if (answeredTeams.length > 0) {
+                          return <span className="waiting">⏳ Players answering... ({answeredTeams.length}/{connectedTeams.length})</span>;
+                        } else {
+                          return <span className="waiting">⏳ Waiting for answers...</span>;
+                        }
+                      })()}
+                    </div>
+                  </>
                 )}
                 {gameState.answersRevealed && currentQuestionIndex < questions.length - 1 && (
                   <button className="btn-next" onClick={() => startQuestion(currentQuestionIndex + 1)}>

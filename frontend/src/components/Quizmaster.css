@@ -221,9 +221,32 @@
 
 .control-buttons {
   display: flex;
+  flex-direction: column;
   gap: 15px;
-  justify-content: center;
+  align-items: center;
   margin-top: 20px;
+}
+
+.answer-status {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.answer-status .waiting {
+  color: #FFD700;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.answer-status .all-answered {
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }
 
 .btn-reveal,
