@@ -145,19 +145,19 @@ function Quizmaster() {
           
           {gameState.currentQuestion ? (
             <div className="current-question">
-              <h3>Current Question #{gameState.questionIndex + 1}</h3>
+              <h3>Current Question #{currentQuestionIndex + 1}</h3>
               {gameState.questionActive && (
                 <div className={`timer ${timeRemaining <= 5 ? 'timer-warning' : ''}`}>
                   ⏱️ Time: {timeRemaining}s
                 </div>
               )}
-              <p className="question-text">{gameState.currentQuestion.question}</p>
+              <p className="question-text">{questions[currentQuestionIndex]?.question || gameState.currentQuestion.question}</p>
               <div className="options">
-                {gameState.currentQuestion.options.map((option, idx) => (
+                {(questions[currentQuestionIndex]?.options || gameState.currentQuestion.options).map((option, idx) => (
                   <div 
                     key={idx} 
                     className={`option ${
-                      gameState.answersRevealed && option === gameState.currentQuestion.correctAnswer 
+                      gameState.answersRevealed && idx === (questions[currentQuestionIndex]?.correctAnswer ?? gameState.currentQuestion.correctAnswer)
                         ? 'correct' 
                         : ''
                     }`}
@@ -167,9 +167,9 @@ function Quizmaster() {
                 ))}
               </div>
               
-              {gameState.answersRevealed && gameState.currentQuestion.explanation && (
+              {gameState.answersRevealed && (questions[currentQuestionIndex]?.explanation || gameState.currentQuestion.explanation) && (
                 <div className="explanation">
-                  <strong>Explanation:</strong> {gameState.currentQuestion.explanation}
+                  <strong>Explanation:</strong> {questions[currentQuestionIndex]?.explanation || gameState.currentQuestion.explanation}
                 </div>
               )}
 
