@@ -67,7 +67,11 @@ function TeamLeader() {
     // Listen for revealed answers
     socket.on('answers-revealed', (data) => {
       setRevealedAnswer(data);
-      setRevealedQuestion(currentQuestion); // Save current question data with results
+      // Use functional update to access current state
+      setCurrentQuestion(current => {
+        setRevealedQuestion(current);
+        return current;
+      });
     });
 
     // Listen for game reset
